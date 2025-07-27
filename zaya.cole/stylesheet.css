@@ -1,0 +1,134 @@
+:root {
+    --blue0: #1EB5E8; /*3590F3*/
+    --blue1: #62BFED;
+    --blue2: #8FB8ED;
+    --black: #21252E; /* dark contrast */
+    --grey: #2F333C;  /* background */
+}
+
+body {
+    background-color: var(--grey);
+}
+
+.wrapper {
+    margin: auto;
+    width: 90%;
+    
+}
+
+h1 {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    color: var(--blue0);
+}
+
+h2, h3 {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: left;
+    color: var(--blue0);
+}
+
+p, li, label{
+    font-family: sans-serif;
+    word-wrap: break-word;
+    color: white;
+}
+
+.signupMessage {
+    background-color: rgba(255, 0, 0, 0.15);
+    margin: auto;
+    padding: 5px;
+    width: 40%;
+}
+
+
+.loginDiv {
+    float: left;
+    width: 49%;
+    /*border: solid 1px;*/
+    margin: 30px;
+    padding: 20px;
+    background-color: var(--black);
+}
+
+/* Navbar Styling */
+
+.decoNav {
+    margin: auto;
+    background-color: var(--black);
+    width: 50%;
+}
+
+.navItems {
+    background-color: var(--black);
+    float: left;
+    list-style: none;
+    padding-bottom: 16px;
+    padding-top: 16px;
+    text-align: center;
+    width: 20%;
+    
+    
+
+}
+
+.navItems:hover {
+    background-color: var(--blue0);
+    color: var(--black);
+}
+
+.activePage {
+    background-color: var(--grey);
+    float: left;
+    list-style: none;
+    margin: auto;
+    padding-bottom: 16px;
+    padding-top: 16px;
+    text-align: center;
+    width: 20%;
+    
+}
+
+.databaseDispTable {
+    width: 100%;
+    background-color: var(--black);
+    border-collapse: collapse;
+}
+
+tr:hover {
+    background-color: var(--blue0);
+    color: var(--black);
+}
+
+th {
+    color: var(--blue0);
+
+
+    font-size: small;
+}
+
+td {
+    color: white;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    font-size: smaller;
+}
+
+tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.invis {
+    visibility: hidden;
+    display: none;
+}
+
+/*tr:nth-child(even) {
+    background-color: var(--grey);
+}*/
+
+
+
+/*.rulesDiv {
+    border: solid 1px;
+}*/
