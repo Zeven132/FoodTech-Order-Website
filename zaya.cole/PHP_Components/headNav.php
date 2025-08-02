@@ -14,6 +14,12 @@
             exit;
         }
         //echo "Successfully Connected!";
+
+        if(!isset($_SESSION['account_loggedin']))
+        {
+            header('Location: loggedOutRedirect.php');
+            exit;
+        }
     ?>
     <head>
         <link rel="stylesheet" href="../stylesheet.css">
