@@ -29,6 +29,9 @@
         <meta name="keywords" content="Food order form">
         <meta name="author" content="Zaya Cole">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <!-- jquery init -->
+        <script src="../Plugins/jquery-3.7.1.min.js"></script>
     </head>
     <body>
         <!--<ul class="decoNav">
