@@ -1,5 +1,5 @@
 <?php
-    //https://codeshack.io/secure-login-system-php-mysql/
+    //adapted from https://codeshack.io/secure-login-system-php-mysql/
     session_start();
     include("../PHP_Components/config.php");
 
@@ -12,7 +12,7 @@
 
     if(!isset($_POST['username'], $_POST['password']))
     {
-        echo "You Are Dumb!";
+        header('Location: /3DIG/zaya.cole/webpages/loggedOutRedirect.php?error=true');
         exit;
     }
     
@@ -29,7 +29,6 @@
             
             if (($_POST['password'] === $password))
             {
-                echo "Yay!! you are logged in!";
                 session_regenerate_id();
                 $_SESSION['account_loggedin'] = TRUE;
                 $_SESSION['account_name'] = $_POST['username'];
@@ -41,13 +40,12 @@
             }
             else
             {
-                echo "Wrong Info.. ";
-                echo $_POST['username'];
+                header('Location: /3DIG/zaya.cole/webpages/loggedOutRedirect.php?error=true');
             }
         }
         else
         {
-            echo "SUPER Wrong Info.. Loser";
+            header('Location: /3DIG/zaya.cole/webpages/loggedOutRedirect.php?error=true');
         }
         $stmt->close();
     }

@@ -41,6 +41,15 @@
             <label for="password">Password:</label>
             <input type="password" name="password">
             <br>
+            <p>
+                <?php 
+                if ($_GET['error'])
+                {
+                    echo "Please enter in a valid username and password.";
+                }
+                ?>
+            </p>
+
             <input type="submit" value="Submit">
         </form>
         </div>
