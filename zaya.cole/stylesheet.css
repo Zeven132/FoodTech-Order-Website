@@ -12,7 +12,7 @@ body {
 
 .wrapper {
     margin: auto;
-    width: 90%;
+    width: 95%;
     
 }
 
@@ -118,11 +118,112 @@ tr {
     border-bottom: 1px solid #ddd;
 }
 
+/* makes elements invisible */
 .invis {
     visibility: hidden;
     display: none;
 }
 
+a {
+    color: white;
+}
+
+.logoutButton {
+    /*padding-top: 6px;*/
+    margin: auto;
+    margin-top: 4px;
+    margin-right: 3px;
+    background-color: red;
+    width: 70px;
+    border-radius: 5px;
+    float: right;
+    font-size: small;
+    text-align: center;
+}
+
+.IndexNavRow {
+    /*background-color: white;*/
+    width: 100%;
+    padding: 6px;
+    margin: auto;
+    align-self: center;
+    justify-content: space-evenly;
+    
+}
+
+
+/* gallery base is from https://www.w3schools.com/css/tryit.asp?filename=trycss_image_gallery_responsive */
+
+
+
+div.gallery img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  opacity: 70%;
+}
+
+div.gallery img:hover {
+    opacity: 100%;
+}
+
+.responsive {
+  padding: 0px 0px;
+  float:left;
+  width: 33.33%;
+  /*background-color: white;*/
+}
+/*
+@media only screen and (max-width: 900px) {
+  .responsive {
+    width: 42%;
+    /*margin: 6px 0;*/
+  /*}
+}*/
+
+@media only screen and (max-width: 500px) {
+  .responsive {
+    width: 100%;
+  }
+}
+
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.foggyGlass {
+    background-color: rgb(255 255 255 / 20%);
+    border-radius: 20px;
+    width: 60%;
+    margin-top: 20%;
+    margin-right: auto;
+    margin-left: auto;
+    align-self: center;
+    align-content: center;
+    backdrop-filter: blur(10px);
+    
+}
+
+/*.loginBG {
+    
+    max-width:  100%;
+    height: auto;
+    background-repeat: no-repeat;
+}*/
+
+.foggyGlass:hover {
+    backdrop-filter: blur(15px);
+}
+
+
+.imageAttribution {
+    margin: auto;
+    background-color: var(--black);
+    padding-bottom: 20px;
+    width: 80%;
+}
 /*tr:nth-child(even) {
     background-color: var(--grey);
 }*/

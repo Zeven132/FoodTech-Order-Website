@@ -1,0 +1,166 @@
+<html>
+    <?php include("../PHP_Components/headNav.php");
+
+
+            // defining functions & vars
+
+            
+            
+
+
+            //$output = LogClassOrderData();
+
+            function RemoveDoublequotes($value, $key)
+            {
+                $value = str_replace('"', "", $value);
+            }
+            
+
+            function DecodeJSON($string)
+            {
+            
+                $string = str_replace("{[", "", $string);
+                $string = str_replace("]}", "", $string);
+                $data = explode("], [", $string);
+                for($i = 0; $i < count($data); $i++) 
+                {
+                    $output[$i] = explode(", ", $data[$i]);
+                }
+                //$output = array_walk_recursive($output, "RemoveDoublequotes");
+
+                //echo var_dump($output);
+                return $output;
+            }
+
+
+            
+            function CompareCombine($string, $string1)
+            {
+                //isolate units
+                $stringLetters = preg_replace('/[^A-z]/', "", $string);
+                $string1Letters = preg_replace('/[^A-z]/', "", $string1);
+
+                //comparing units (case irrespective)
+                if (strcasecmp($stringLetters, $string1Letters) == 0)
+                {
+                    //strings identical; isolate numbers and sum
+                    $stringVal = preg_replace('/[^0-9.]/', "", $string);
+                    $string1Val = preg_replace('/[^0-9.]/', "", $string1);
+
+                    //return sum with units
+                    return (((int) $stringVal) + ((int) $string1Val)).$stringLetters;
+
+                }
+                else
+                {
+                    //inconsistant units; throw error
+                    //echo "Error: inconsistant measurement units for identical ingredients.";
+                    $inconsistantArr[] = '"$string" and "$string1"';
+                    return false;
+                    //echo "<script type='text/javascript'>promt('$message');</script>";
+                }
+            }
+
+
+            // SCRIPT EXEC STARTS HERE ----------------------------------------------------------------------------------
+            
+            $ingredientData = array();
+            $ClassRowIDs = explode(", ", $_POST["rowSelect"]);
+            $Catagories = array("Baking", "Bread", "Chilled", "Dairy", "Dried", "Fresh", "Frozen", "Other", "Raw", "Sauces", "Tinned", "Vegetables");
+            $id = 0;
+            
+
+            foreach ($ClassRowIDs as $ClassRow) //exec per class order
+            {
+                echo "<table>";
+                $sql = "SELECT Baking, Bread, Chilled, Dairy, Dried, Fresh, Frozen, Other, Raw, Sauces, Tinned, Vegetables FROM zayacole_class_order WHERE rowID = $ClassRow";
+                $result = $dbconnect->query($sql);
+
+                while ($row = $result->fetch_assoc()) 
+                {
+                    
+                    for ($cata = 0; $cata < 12; $cata++) //exec per food type
+                    {
+                        //echo ($row[$cata]);
+                        echo '<tr><td>'."$Catagories[$cata]<br>";
+                        
+                        
+                        $ingredientData[$id][$cata] = DecodeJSON($row[$Catagories[$cata]]);
+                        
+
+                        for ($foodItem = 0; $foodItem < count($ingredientData[$id][$cata]); $foodItem++) //exec per food item
+                        {
+                            
+                            echo '</td><td>'.$ingredientData[$id][$cata][$foodItem][0]." : ".$ingredientData[$id][$cata][$foodItem][1];
+
+                            //echo $foodItem;
+                             //echo "<br>";
+                            //$ingredientNames[] = ingredientData[$foodItem];
+                            //echo var_dump($ingredientNames);
+                            //echo "<br>";
+                            
+                        }
+
+                        echo "</td></tr>";
+
+
+                        
+                       
+                         
+                    }
+                    //echo var_dump($ingredientData);   
+                    
+                } 
+                echo "</table><br>";
+                $id++;
+            }
+        
+            echo var_dump($ingredientData);
+
+            // COMPARING INGREDIENT DATA AND COMBINING ---------------------------------------------------
+
+            $consolidatedArr = array();
+
+            for ($i = 0; $i < count($ingredientData); $i++) // for each order
+            {
+                for ($j = 0; $j < count($ingredientData[$i]); $j++) // for each catagory
+                {
+                    for ($k = 0; $k < count($ingredientData[$i][$j]); $k++) // for each food item
+                    {
+                        if (!(isset($consolidatedArr[$j][$k][1]))) // if empty
+                        {
+                            $consolidatedArr[$j][$k][1] = $ingredientData[$i][$j][$k][1];
+                            $consolidatedArr[$j][$k][0] = $ingredientData[$i][$j][$k][0];
+                        }
+                        else // check current order for duplicates
+                        {
+                            for ($l = 0; $l < count($ingredientData[$i]); $l++) // for each catagory
+                            {
+                                for ($m = 0; $m < count($ingredientData[$i][$l]); $m++) // for each food item
+                                {
+                                    if ($consolidatedArr[$j][$k][1] == $ingredientData[$i][$l][$m][1])
+                                    {
+                                        $consolidatedArr[$j][$k][0] = CompareCombine($consolidatedArr[$j][$k][0], $ingredientData[$i][$l][$m][0]);
+                                    }
+                                }
+                            }
+                        }
+                        
+                        
+
+                    }
+                }
+            }
+
+            echo "<br><br>";
+            echo var_dump($consolidatedArr);
+
+
+            ?>
+            
+    <body>
+        <div class="wrapper">
+            
+        </div>
+    </body>
+</html>

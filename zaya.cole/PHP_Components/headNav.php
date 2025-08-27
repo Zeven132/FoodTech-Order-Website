@@ -2,7 +2,6 @@
 <?php
         session_start();
         include("../PHP_Components/config.php");
-        //include("../PHP_Components/functions.php");
     
         //Connect to the database … passing host, database, username and password info. 
         //If these change then update config.php
@@ -23,23 +22,15 @@
     ?>
     <head>
         <link rel="stylesheet" href="../stylesheet.css">
-        <link rel="icon" href="../faviconPlaceholder.ico">
+        <link rel="icon" href="../faviconFTD.png">
         <meta charset="UTF-8">
-        <meta name="description" content="To be done.. later">
-        <meta name="keywords" content="Food order form">
+        <!--<meta name="description" content="To be done.. later">
+        <meta name="keywords" content="Food order dashboard">-->
         <meta name="author" content="Zaya Cole">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Foodtech Order Dashboard</title>
         
         <!-- jquery init -->
         <script src="../Plugins/jquery-3.7.1.min.js"></script>
     </head>
-    <body>
-        <!--<ul class="decoNav">
-            <li class="activePage">Main</li>
-            <li class="navItems">About</li>
-            <li class="navItems">Rules</li>
-            <li class="navItems">Create</li>
-            <li class="navItems">Profile</li>
-        </ul>-->
-    </body>
 </html>
