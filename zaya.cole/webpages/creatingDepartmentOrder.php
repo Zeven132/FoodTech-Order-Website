@@ -32,6 +32,24 @@
                 return $output;
             }
 
+            function EncodeJSON($arr)
+            {
+                $output = '{';
+                for($i = 0; $i < count($arr); $i++)
+                {
+                    if ($output == '{')
+                    {
+                        $output += '['.$arr[$i][1].', '.$arr[$i][0].']';
+                    }
+                    else
+                    {
+                        $output += ', ['.$arr[$i][1].', '.$arr[$i][0].']';
+                    }
+                }
+                $output += '}';
+                return $output;
+            }
+
 
             
             function CompareCombine($string, $string1)
@@ -154,7 +172,11 @@
 
             echo "<br><br>";
             echo var_dump($consolidatedArr);
-
+            /*
+            '
+            INSERT INTO zayacole_department_order (Baking, Bread, Chilled, Dairy, Dried, Fresh, Frozen, Other, Raw, Sauces, Tinned, Vegetables, TechnicianReq, DateCreated)
+            VALUES ('.EncodeJSON($consolidatedArr[0]).', '.EncodeJSON($consolidatedArr[1].', '.EncodeJSON($consolidatedArr[2].', '.EncodeJSON($consolidatedArr[3].', '.EncodeJSON($consolidatedArr[4].', '.EncodeJSON($consolidatedArr[5].', '.EncodeJSON($consolidatedArr[6].', '.EncodeJSON($consolidatedArr[7].', '.EncodeJSON($consolidatedArr[8].', '.EncodeJSON($consolidatedArr[9].', '.EncodeJSON($consolidatedArr[10].', '.EncodeJSON($consolidatedArr[11].', $requests, '.date("Y-m-d"));
+*/
 
             ?>
             
