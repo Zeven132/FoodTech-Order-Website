@@ -10,6 +10,11 @@
                     <input type="submit">
                 </form>
             </div>
+            <?php
+                $sql = "SELECT * FROM zayacole_class_order ORDER BY RowID DESC LIMIT 5";
+                $result = $dbconnect->query($sql);
+                DisplayClassTable($result, "class");
+            ?>
         </div>
     </body>
 </html>

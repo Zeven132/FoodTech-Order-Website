@@ -1,48 +1,36 @@
 <html lang>
     <?php include("../PHP_Components/headNav.php"); ?>
-
     <head>
         <script>
-            
+            //https://stackoverflow.com/questions/19322435/loading-javascript-function-on-start-using-javascript
             window.onload = onLoadFunctions;
             var inputItem = "";
             var inputQuantity = "";
-
-
             var dataJSONArray = ["teacherFormat", "dateFormat", "classFormat", "roomNumFormat", "recipeFormat", "studentsFormat", "blockFormat", "techreqFormat", "bakingFormat", "breadFormat", "chilledFormat", "dairyFormat", "driedFormat", "freshFormat", "frozenFormat", "otherFormat", "rawFormat", "saucesFormat", "tinnedFormat", "vegetablesFormat"];
             var dataInputArray = ["teacherInput", "dateInput", "classInput", "roomNumInput", "recipeInput", "studentsInput", "blockInput", "techreqInput"];
-            //https://stackoverflow.com/questions/19322435/loading-javascript-function-on-start-using-javascript
-           
-            function onLoadFunctions() 
+
+            // ran on document loaded
+            function onLoadFunctions()
             {
                 for(let i = 0; i < 8; i++)
                 {
-                    document.getElementById(dataJSONArray[i]).value = "none";
-                }
-
-                for(let i = 8; i < 20; i++)
-                {
-                    document.getElementById(dataJSONArray[i]).value = "{";
+                    document.getElementById("Format"+i).value = "none";
                 }
             }
-            
+
             function SaveItemToFormatter()
             {
                 for(let i = 0; i < 8; i++)
                 {
-                    document.getElementById(dataJSONArray[i]).value = document.getElementById(dataInputArray[i]).value;
+                    $("#Format"+i).val = document.getElementById(dataInputArray[i]).value;
                 }
-                /*$("#teacherFormat").val() = $("#teacherInput").val();
-                $("#dateFormat").val()
-                $("#classFormat").val()
-                $("#roomNumFormat").val()
-                $("#studentsFormat").val()
-                $("#recipeFormat").val()
-                $("#blockFormat").val()
-                $("#techreqFormat").val()*/
 
                 inputQuantity = document.getElementById("quantityInput").value;
+                inputQuantity = CleanInput(inputQuantity);
+
                 inputItem = document.getElementById("itemInput").value;
+                inputItem = CleanInput(inputItem);
+
                 let type = document.getElementById("foodType").value;
 
                 for (let i = 1; i < 13; i++)
@@ -50,91 +38,81 @@
                     if (i == Number(type))
                     {
                         let k = i+7;
-                        
-                        if (document.getElementById(dataJSONArray[k]).value == '{')
-                        {
-                            document.getElementById(dataJSONArray[k]).value += '["'+inputQuantity+'", "'+inputItem+'"]';
-                        }
-                        else
-                        {
-                            document.getElementById(dataJSONArray[k]).value += ', ["'+inputQuantity+'", "'+inputItem+'"]';
-                        }
+                        SumIngredientsAndSave(document.getElementById("Format"+k).value, inputQuantity, inputItem, k);
                     }
+                }
+                
+                document.getElementById("quantityInput").value = document.getElementById("itemInput").value = "";
+                inputQuantity = inputItem = "";
+            }
+
+            function SumIngredientsAndSave(prevData, quantity, name, k)
+            {
+                console.log(prevData.indexOf(name));
+                if (prevData.indexOf('"'+name+'"') != -1) // existing ingredient
+                {
+                    let existingQuantityStart = prevData.substring(0 , prevData.indexOf('"'+name+'"') - 1);
+                    existingQuantityStart = existingQuantityStart.lastIndexOf("[");
+                    let existingQuantity = prevData.substring(existingQuantityStart , prevData.indexOf('"'+name+'"') - 1);
+                    //console.log(existingQuantity);
+                    let existingQuantityInt = existingQuantity.replace(/\D/g, "");
+                    console.log(existingQuantity+" -> "+existingQuantityInt);
+                    let quantityInt = quantity.replace(/[a-zA-Z]/g, "");
+                    let newQuantity = parseInt(existingQuantityInt) + parseInt(quantityInt);
+
+                    document.getElementById("Format"+k).value = prevData.replace(existingQuantity, existingQuantity.replace(existingQuantityInt, newQuantity));
+                    DisplayInput();
                     
                 }
-                DisplayInput();
-                document.getElementById("quantityInput").value = document.getElementById("itemInput").value = "";
-                //document.getElementById("breadFormat").value += "!!"+inputQuantity+"~~"+inputItem;
-                inputQuantity = inputItem = "";
+                else // unique ingredient
+                {
+                    document.getElementById("Format"+k).value += '["'+quantity+'", "'+name+'"]';
+                    DisplayInput(quantity, name);
+                }
+                console.log(prevData);
             }
 
             function DisplayInput()
             {
-                document.getElementById("inputDisplay").innerHTML += (document.getElementById("quantityInput").value+" "+document.getElementById("itemInput").value+"<br>");
-
-            }
-            //https://tecadmin.net/submit-form-without-page-refresh-php-jquery/
-            function SubmitFormData() 
-            {
-
-                for(let i = 8; i < 20; i++)
+                document.getElementById("inputDisplay").innerHTML = "";
+                for (let i = 8; i < 20; i++)
                 {
-                    document.getElementById(dataJSONArray[i]).value += '}';
+                    document.getElementById("inputDisplay").innerHTML += CleanInput((document.getElementById("Format"+i).value).replaceAll("]", "<br>"));
+                }
+                
+            }
+
+            //https://tecadmin.net/submit-form-without-page-refresh-php-jquery/
+            function SubmitFormData()
+            {
+                for(let i = 8; i < 20; i++) // formats to JSON
+                {
+                    document.getElementById("Format"+i).value = "{" + document.getElementById("Format"+i).value + "}";
+                    //document.getElementById("Format"+i).value = (document.getElementById("Format"+i).value).replace("/][/g", "], [");
                 }
 
+                var uploadData = []; // writing values to arr
 
-                var teacher = $("#teacherFormat").val();
-                var date = $("#dateFormat").val();
-                var Class = $("#classFormat").val(); // capitalized because class is a javascript term which cannot be used as the name of a var
-                var roomNum = $("#roomNumFormat").val();
-                var students = $("#studentsFormat").val();
-                var recipe = $("#recipeFormat").val();
-                var block = $("#blockFormat").val();
-                var techReq = $("#techreqFormat").val();
-                var baking = $("#bakingFormat").val();
-                var bread = $("#breadFormat").val();
-                var chilled = $("#chilledFormat").val();
-                var dairy = $("#dairyFormat").val();
-                var dried = $("#driedFormat").val();
-                var fresh = $("#freshFormat").val();
-                var frozen = $("#frozenFormat").val();
-                var other = $("#otherFormat").val();
-                var raw = $("#rawFormat").val();
-                var sauces = $("#saucesFormat").val();
-                var tinned = $("#tinnedFormat").val();
-                var vegetables = $("#vegetablesFormat").val();
-                $.post("uploadData.php", { teacher: teacher, date: date, class: Class, roomNum: roomNum, students: students, recipe: recipe, block: block, techReq: techReq, baking: baking, bread: bread, chilled: chilled, dairy: dairy, dried: dried, fresh: fresh, frozen: frozen, other: other, raw: raw, sauces: sauces, tinned: tinned, vegetables: vegetables});
-                window.location.replace("https://php.papamoacollege.school.nz/3DIG/zaya.cole/index.php");
+                for (let i = 0; i < 20; i++)
+                {
+                    uploadData[i] = document.getElementById("Format"+i).value;
+                    uploadData[i] = uploadData[i].replaceAll("][", "], [");
+                }
+
+                for (let i = 0; i < 20; i++)
+                {
+                    console.log(uploadData[i]);
+                    console.log("\n");
+                }
+
+                $.post("uploadData.php", { teacher: uploadData[0], date: uploadData[1], class: uploadData[2], roomNum: uploadData[3], students: uploadData[4], recipe: uploadData[5], block: uploadData[6], techReq: uploadData[7], baking: uploadData[8], bread: uploadData[9], chilled: uploadData[10], dairy: uploadData[11], dried: uploadData[12], fresh: uploadData[13], frozen: uploadData[14], other: uploadData[15], raw: uploadData[16], sauces: uploadData[17], tinned: uploadData[18], vegetables: uploadData[19]});
+                //window.location.replace("https://php.papamoacollege.school.nz/3DIG/zaya.cole/index.php");
             }
+
         </script>
     </head>
     <body>
         <div class="wrapper">
-            <!--<h1>Login to Existing Account</h1>
-            <div class="signupMessage">
-                <p style="text-align: center;">Don't have an account? Sign up for one <a href="signup.php">Here</a></p>
-            </div>-->
-<!-- login form-->
-            <?php
-
-            //$quantity = "null";
-            //$foodItem = "";
-            /*function updateDisp()
-            {
-                if("" != $_POST["quantity"] && "" != $_POST["foodItem"])
-                {
-                    echo "Quantity: ".$_POST["quantity"]."<br>Ingredient: ".$_POST["foodItem"];
-                    echo "<br>";
-                }
-            }*/
-
-
-
-            ?>
-            <!--https://stackoverflow.com/questions/2075337/uncaught-referenceerror-is-not-defined
-            -->
-
-
             <div class="LoginDiv">
                 <h1>Create New</h1>
                 <h3>Class Details</h3>
@@ -190,40 +168,32 @@
                 </form>
 
                 <form method="post" action="uploadData.php">
-                    <input class="invis" type="text" id="teacherFormat" name="teacher">
-                    <input class="invis" type="text" id="dateFormat" name="date">
-                    <input class="invis" type="text" id="classFormat" name="class">
-                    <input class="invis" type="text" id="roomNumFormat" name="roomNum">
-                    <input class="invis" type="text" id="studentsFormat" name="students">
-                    <input class="invis" type="text" id="recipeFormat" name="recipe">
-                    <input class="invis" type="text" id="blockFormat" name="block">
-                    <input class="invis" type="text" id="techreqFormat" name="techReq">
-                    <input class="invis" type="text" id="bakingFormat" name="baking">
-                    <input class="invis" type="text" id="breadFormat" name="bread">
-                    <input class="invis" type="text" id="chilledFormat" name="chilled">
-                    <input class="invis" type="text" id="dairyFormat" name="dairy">
-                    <input class="invis" type="text" id="driedFormat" name="dried">
-                    <input class="invis" type="text" id="freshFormat" name="fresh">
-                    <input class="invis" type="text" id="frozenFormat" name="frozen">
-                    <input class="invis" type="text" id="otherFormat" name="other">
-                    <input class="invis" type="text" id="rawFormat" name="raw">
-                    <input class="invis" type="text" id="saucesFormat" name="sauces">
-                    <input class="invis" type="text" id="tinnedFormat" name="tinned">
-                    <input class="invis" type="text" id="vegetablesFormat" name="vegetables">
+                    <input class="invis" type="text" id="Format0" name="teacher">
+                    <input class="invis" type="text" id="Format1" name="date">
+                    <input class="invis" type="text" id="Format2" name="class">
+                    <input class="invis" type="text" id="Format3" name="roomNum">
+                    <input class="invis" type="text" id="Format4" name="students">
+                    <input class="invis" type="text" id="Format5" name="recipe">
+                    <input class="invis" type="text" id="Format6" name="block">
+                    <input class="invis" type="text" id="Format7" name="techReq">
+                    <input class="invis" type="text" id="Format8" name="baking">
+                    <input class="invis" type="text" id="Format9" name="bread">
+                    <input class="invis" type="text" id="Format10" name="chilled">
+                    <input class="invis" type="text" id="Format11" name="dairy">
+                    <input class="invis" type="text" id="Format12" name="dried">
+                    <input class="invis" type="text" id="Format13" name="fresh">
+                    <input class="invis" type="text" id="Format14" name="frozen">
+                    <input class="invis" type="text" id="Format15" name="other">
+                    <input class="invis" type="text" id="Format16" name="raw">
+                    <input class="invis" type="text" id="Format17" name="sauces">
+                    <input class="invis" type="text" id="Format18" name="tinned">
+                    <input class="invis" type="text" id="Format19" name="vegetables">
                 </form>
             </div>
-
             <div class="InputDisplayDiv">
                 <h3>Ingredients:<h3>
                 <p id="inputDisplay"></p>
-
             </div>
         </div>
     </body>
 </html>
-
-
-
-
-
-
