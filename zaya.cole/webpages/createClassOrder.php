@@ -106,8 +106,13 @@
                 }
 
                 $.post("uploadData.php", { teacher: uploadData[0], date: uploadData[1], class: uploadData[2], roomNum: uploadData[3], students: uploadData[4], recipe: uploadData[5], block: uploadData[6], techReq: uploadData[7], baking: uploadData[8], bread: uploadData[9], chilled: uploadData[10], dairy: uploadData[11], dried: uploadData[12], fresh: uploadData[13], frozen: uploadData[14], other: uploadData[15], raw: uploadData[16], sauces: uploadData[17], tinned: uploadData[18], vegetables: uploadData[19]});
-                //window.location.replace("https://php.papamoacollege.school.nz/3DIG/zaya.cole/index.php");
             }
+
+            // redirects after upload
+            $(document).ajaxComplete(function()
+            {
+                Redirect();
+            });
 
         </script>
     </head>

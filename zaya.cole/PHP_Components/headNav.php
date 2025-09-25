@@ -12,8 +12,8 @@
             echo "Connection Failed: ".mysqli_connect_error();
             exit;
         }
-        //echo "Successfully Connected!";
 
+        // if logged out then redirect to login page
         if(!isset($_SESSION['account_loggedin']))
         {
             header('Location: loggedOutRedirect.php');
@@ -154,7 +154,6 @@
 
                 for ($k = 0; $k < count($names); $k++)
                 {
-                    
                     $output = DecodeJSON($row[$names[$k]], 1);
                     //echo var_dump($output);
                     echo '<tr><th><h2>'.$titleNames[$k].'</h2></th></tr><tr>';
@@ -172,8 +171,6 @@
                 echo "</table>";
             }
             echo "</form>";
-
-
         }
     ?>
     <head>
@@ -188,6 +185,8 @@
         
         <!-- jquery init -->
         <script src="../Plugins/jquery-3.7.1.min.js"></script>
+
+        <!-- defining cross-site JS functions -->
         <script>
             // input validation
             function CleanInput(input)

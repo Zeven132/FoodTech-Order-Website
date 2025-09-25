@@ -1,7 +1,5 @@
 <html>
 <?php
-
-
     include("../PHP_Components/headNav.php");
         $row = $_POST["row"];
         $teacher = $_POST["teacher"];
@@ -30,20 +28,7 @@
     SET TeacherCode = '$teacher', PracticalDay = '$date', Class = '$class', RoomNum = '$roomNum', Recipe = '$recipe', NumOfStudents = '$students', Block = '$block', Baking = '$baking', Bread = '$bread', Chilled = '$chilled', Dairy = '$dairy', Dried = '$dried', Fresh = '$fresh', Frozen = '$frozen', Other = '$other', Raw = '$raw', Sauces = '$sauces', Tinned = '$tinned', Vegetables = '$vegetables', TechnicianReq = '$techReq'
     WHERE RowID = '$row'";
 
-    if ($dbconnect->query($sql) == TRUE) 
-    {
-        //echo "Record updated successfully";
-        //header("Location: https://php.papamoacollege.school.nz/3DIG/zaya.cole/index.php/", true);
-        //echo '<html><head><script></script></head></html>';
-        //exit();
-        ?>
-        <script>
-        Redirect();
-        </script>
-        <?php
-        
-    } 
-    else 
+    if (!($dbconnect->query($sql) == TRUE)) 
     {
         echo "Error: " . $sql . "<br>" . $dbconnect->error;
     }

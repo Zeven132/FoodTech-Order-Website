@@ -55,6 +55,11 @@
                     tinned: JSEncodeJSON(newData[10], lengths[10]), 
                     vegetables: JSEncodeJSON(newData[11], lengths[11])});
             }
+
+            $(document).ajaxComplete(function()
+            {
+                Redirect();
+            });
         </script>
     </head>
 
