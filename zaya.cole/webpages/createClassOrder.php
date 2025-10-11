@@ -20,30 +20,35 @@
 
             function SaveItemToFormatter()
             {
+                // get values from non ingredient inputs
                 for(let i = 0; i < 8; i++)
                 {
-                    $("#Format"+i).val = document.getElementById(dataInputArray[i]).value;
+                    document.getElementById("Format"+i).value = document.getElementById(dataInputArray[i]).value;
                 }
 
-                inputQuantity = document.getElementById("quantityInput").value;
-                inputQuantity = CleanInput(inputQuantity);
-
-                inputItem = document.getElementById("itemInput").value;
-                inputItem = CleanInput(inputItem);
-
-                let type = document.getElementById("foodType").value;
-
-                for (let i = 1; i < 13; i++)
+                if (document.getElementById("itemInput").value != "")
                 {
-                    if (i == Number(type))
+                    inputQuantity = document.getElementById("quantityInput").value;
+                    inputQuantity = CleanInput(inputQuantity);
+
+                    inputItem = document.getElementById("itemInput").value;
+                    inputItem = CleanInput(inputItem);
+
+                    let type = document.getElementById("foodType").value;
+
+                    for (let i = 1; i < 13; i++)
                     {
-                        let k = i+7;
-                        SumIngredientsAndSave(document.getElementById("Format"+k).value, inputQuantity, inputItem, k);
+                        if (i == Number(type))
+                        {
+                            let k = i+7;
+                            SumIngredientsAndSave(document.getElementById("Format"+k).value, inputQuantity, inputItem, k);
+                        }
                     }
+                    
+                    document.getElementById("quantityInput").value = document.getElementById("itemInput").value = "";
+                    inputQuantity = inputItem = "";
                 }
-                
-                document.getElementById("quantityInput").value = document.getElementById("itemInput").value = "";
-                inputQuantity = inputItem = "";
+                DisplayInput();
             }
 
             function SumIngredientsAndSave(prevData, quantity, name, k)
@@ -54,31 +59,37 @@
                     let existingQuantityStart = prevData.substring(0 , prevData.indexOf('"'+name+'"') - 1);
                     existingQuantityStart = existingQuantityStart.lastIndexOf("[");
                     let existingQuantity = prevData.substring(existingQuantityStart , prevData.indexOf('"'+name+'"') - 1);
-                    //console.log(existingQuantity);
                     let existingQuantityInt = existingQuantity.replace(/\D/g, "");
                     console.log(existingQuantity+" -> "+existingQuantityInt);
                     let quantityInt = quantity.replace(/[a-zA-Z]/g, "");
                     let newQuantity = parseInt(existingQuantityInt) + parseInt(quantityInt);
 
                     document.getElementById("Format"+k).value = prevData.replace(existingQuantity, existingQuantity.replace(existingQuantityInt, newQuantity));
-                    DisplayInput();
+                    //DisplayInput();
                     
                 }
                 else // unique ingredient
                 {
                     document.getElementById("Format"+k).value += '["'+quantity+'", "'+name+'"]';
-                    DisplayInput(quantity, name);
+                    //DisplayInput(quantity, name);
                 }
                 console.log(prevData);
             }
 
             function DisplayInput()
             {
+                
                 document.getElementById("inputDisplay").innerHTML = "";
+                document.getElementById("classDetailsDisplay").innerHTML = "";
                 for (let i = 8; i < 20; i++)
                 {
                     document.getElementById("inputDisplay").innerHTML += CleanInput((document.getElementById("Format"+i).value).replaceAll("]", "<br>"));
                 }
+                for (let i = 0; i < 8; i++)
+                {
+                    document.getElementById("classDetailsDisplay").innerHTML += document.getElementById("Format"+i).value + "<br>";
+                }
+
                 
             }
 
@@ -118,7 +129,7 @@
     </head>
     <body>
         <div class="wrapper">
-            <div class="LoginDiv">
+            <div class="createNewClassOrderDiv">
                 <h1>Create New</h1>
                 <h3>Class Details</h3>
                 <form>
@@ -198,6 +209,10 @@
             <div class="InputDisplayDiv">
                 <h3>Ingredients:<h3>
                 <p id="inputDisplay"></p>
+            </div>
+            <div class="ClassDetailsDisplayDiv">
+                <h3>Class Details:<h3>
+                <p id="classDetailsDisplay"></p>
             </div>
         </div>
     </body>

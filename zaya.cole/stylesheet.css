@@ -42,7 +42,7 @@ p, li, label{
 }
 
 
-.loginDiv {
+.createNewClassOrderDiv {
     float: left;
     width: 49%;
     /*border: solid 1px;*/
@@ -50,6 +50,12 @@ p, li, label{
     padding: 20px;
     background-color: var(--black);
 }
+
+/*
+.ClassDetailsDisplayDiv {
+    float: left;
+    
+}*/
 
 /* Navbar Styling */
 
@@ -233,3 +239,7 @@ div.gallery img:hover {
 /*.rulesDiv {
     border: solid 1px;
 }*/
+
+.ClassDetailsDisplayDiv {
+    float: left;
+}

@@ -4,15 +4,16 @@
 
         // defining functions & vars
 
-       /* function RemoveDoublequotes($value, $key)
-        {
-            $value = str_replace('"', "", $value);
-        }*/
+        $inconsistantNum = 0;
         
-        function CompareCombine($string, $string1)
+        function CompareCombine($string, $string1, $j, $k)
         {
             strtolower($string);
             strtolower($string1);
+
+            // input: 42l, 1 liter
+            // isolate: l, liter
+            // comparing: false -> then???
 
             //isolate units
             $stringLetters = preg_replace('/[^A-z]/', "", $string);
@@ -25,6 +26,8 @@
                 $stringVal = preg_replace('/[^0-9.]/', "", $string);
                 $string1Val = preg_replace('/[^0-9.]/', "", $string1);
 
+                //echo '<script type="text/javascript">document.write("<input type=\"text\" value=\"'.(((int) $stringVal) + ((int) $string1Val)).$stringLetters.'\">");</script>';
+
                 //return sum with units
                 return (((int) $stringVal) + ((int) $string1Val)).$stringLetters;
 
@@ -33,14 +36,17 @@
             {
                 //inconsistant units; throw error
                 //echo "Error: inconsistant measurement units for identical ingredients.";
-                $inconsistantArr[] = '"$string" and "$string1"';
+                echo '<script type="text/javascript">
+                var answer = prompt("Error: the units for '.$string.' and '.$string1.' are not identical despite being used for the same ingredient. Please resolve this by inputting the sum of these two ingredient quantities");
+                document.write(\'<input type="text" class="invis" id="'.$j.'-'.$k.'-0" value="\'+answer+\'">\');</script>';
                 return false;
-                //echo "<script type='text/javascript'>promt('$message');</script>";
+                
             }
         }
 
         $ingredientData = array();
         $ClassRowIDs = explode(", ", $_POST["rowSelect"]);
+        sort($ClassRowIDs);
         $Catagories = array("Baking", "Bread", "Chilled", "Dairy", "Dried", "Fresh", "Frozen", "Other", "Raw", "Sauces", "Tinned", "Vegetables");
         $id = 0;
         
@@ -48,17 +54,15 @@
 
         foreach ($ClassRowIDs as $ClassRow) //exec per class order
         {
-            echo "<table>";
+            //echo "<table>";
             $sql = "SELECT Baking, Bread, Chilled, Dairy, Dried, Fresh, Frozen, Other, Raw, Sauces, Tinned, Vegetables FROM zayacole_class_order WHERE rowID = $ClassRow";
             $result = $dbconnect->query($sql);
 
             while ($row = $result->fetch_assoc()) 
             {
-                
                 for ($cata = 0; $cata < 12; $cata++) //exec per food type
                 {
-                    //echo ($row[$cata]);
-                    echo '<tr><td>'."$Catagories[$cata]<br>";
+                    //echo '<tr><td>'."$Catagories[$cata]<br>";
                     
                     
                     $ingredientData[$id][$cata] = DecodeJSON($row[$Catagories[$cata]], 1);
@@ -68,20 +72,11 @@
                     {
                         if (isset($ingredientData[$id][$cata][$foodItem][1]))
                         {
-                            echo '</td><td>'.$ingredientData[$id][$cata][$foodItem][0]." : ".$ingredientData[$id][$cata][$foodItem][1];
+                            //echo '</td><td>'.$ingredientData[$id][$cata][$foodItem][0]." : ".$ingredientData[$id][$cata][$foodItem][1];
                         }
-                        
-
-
-                        //echo $foodItem;
-                            //echo "<br>";
-                        //$ingredientNames[] = ingredientData[$foodItem];
-                        //echo var_dump($ingredientNames);
-                        //echo "<br>";
-                        
                     }
 
-                    echo "</td></tr>";
+                    //echo "</td></tr>";
 
 
                     
@@ -91,11 +86,11 @@
                 //echo var_dump($ingredientData);   
                 
             } 
-            echo "</table><br>";
+            //echo "</table><br>";
             $id++;
         }
     
-        echo var_dump($ingredientData);
+        //echo var_dump($ingredientData);
 
         // COMPARING INGREDIENT DATA AND COMBINING ---------------------------------------------------
 
@@ -111,6 +106,8 @@
                     {
                         $consolidatedArr[$j][$k][1] = $ingredientData[$i][$j][$k][1];
                         $consolidatedArr[$j][$k][0] = $ingredientData[$i][$j][$k][0];
+                        
+
                     }
                     else
                     {
@@ -126,9 +123,10 @@
                                     {
                                         $newVal = false;
                                         //$consolidatedArr[$j][$k][0] = CompareCombine($consolidatedArr[$j][$k][0], $ingredientData[$i][$l][$m][0]);
-                                        if (CompareCombine($consolidatedArr[$j][$k][0], $ingredientData[$i][$l][$m][0]) != false)
+                                        if (CompareCombine($consolidatedArr[$j][$k][0], $ingredientData[$i][$l][$m][0], $j, $k) != false)
                                         {
-                                            $consolidatedArr[$j][$k][0] = CompareCombine($consolidatedArr[$j][$k][0], $ingredientData[$i][$l][$m][0]);
+                                            $consolidatedArr[$j][$k][0] = CompareCombine($consolidatedArr[$j][$k][0], $ingredientData[$i][$l][$m][0], $j, $k);
+                                            //echo '<script type="text/javascript">document.write("<input type=\"text\" value=\"'.$consolidatedArr[$j][$k][0].'\"><input type=\"text\" value=\"'.$consolidatedArr[$j][$k][1].'\">");</script>';
                                         }
                                     }
                                 }
@@ -136,11 +134,11 @@
                         }
                         if ($newVal == true && $ingredientData[$i][$j][$k][1] != null)
                         {
-                            $consolidatedArr[$j][][0] = $ingredientData[$i][$j][$k][1];
-                            $consolidatedArr[$j][count($consolidatedArr[$j])-1][1] = $ingredientData[$i][$j][$k][0];
+                            $consolidatedArr[$j][][1] = $ingredientData[$i][$j][$k][1];
+                            $consolidatedArr[$j][count($consolidatedArr[$j])-1][0] = $ingredientData[$i][$j][$k][0];
                         }
-
                     }
+                    
 
 
 
@@ -211,17 +209,28 @@
             }
         }
 
-        echo "<br><br>";
+        //echo "<br><br>";
         //echo var_dump($consolidatedArr);
         for ($i = 0; $i < 12; $i++)
         {
             for($k = 0; $k < count($consolidatedArr[$i]); $k++)
             {
-                echo var_dump($consolidatedArr[$i][$k]);
+                //CreateInputFieldsWithError($i, $k, $consolidatedArr);
+                echo 
+                '<script type="text/javascript">
+                if(document.getElementById("'.$i.'-'.$k.'-0") != null)
+                {
+                    document.write(\'<input type="text" value="'.$consolidatedArr[$i][$k][1].'"><input type="text" value="\'+document.getElementById("'.$i.'-'.$k.'-0").value+\'">\');
+
+                }
+                else
+                {
+                    document.write(\'<input type="text" id="'.$i.'-'.$k.'-1" value="'.$consolidatedArr[$i][$k][1].'"><input type="text" id="'.$i.'-'.$k.'-0" value="'.$consolidatedArr[$i][$k][0].'">\');
+                } 
+                </script>';
                 echo ("<br>");
             }
             echo ("<br>");
-
         }
         /*
         $sql = '
@@ -229,6 +238,12 @@
         VALUES ('.EncodeJSON($consolidatedArr[0]).', '.EncodeJSON($consolidatedArr[1].', '.EncodeJSON($consolidatedArr[2].', '.EncodeJSON($consolidatedArr[3].', '.EncodeJSON($consolidatedArr[4].', '.EncodeJSON($consolidatedArr[5].', '.EncodeJSON($consolidatedArr[6].', '.EncodeJSON($consolidatedArr[7].', '.EncodeJSON($consolidatedArr[8].', '.EncodeJSON($consolidatedArr[9].', '.EncodeJSON($consolidatedArr[10].', '.EncodeJSON($consolidatedArr[11].', $requests, '.date("Y-m-d"));
 */
 
+
+/*
+                    document.write(\'<input type="text" id="temp" value="'.$consolidatedArr[$i][$k][1].'"><input type="text" value="\'+document.getElementById("'.$i.'-'.$k.'").value+\'">\');
+                    document.getElementById("'.$i.'-'.$k.'").remove;
+                    document.getElementById("temp").id = "'.$i.'-'.$k.'";
+*/
         ?>
             
     <body>

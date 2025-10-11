@@ -172,6 +172,21 @@
             }
             echo "</form>";
         }
+        /*
+        function CreateInputFieldsWithError($i, $k, $data)
+        {
+            echo 
+            '<script type="text/javascript">
+            if(document.getElementById("'.$i.'-'.$k.'") != null)
+            {
+                document.write(\'<input type="text" value="'.$data[$i][$k][1].'"><input type="text" value="\'+document.getElementById("'.$i.'-'.$k.'").value+\'">\');
+            }
+            else
+            {
+                document.write("<input type=\"text\" value=\"'.$data[$i][$k][1].'\"><input type=\"text\" value=\"'.$data[$i][$k][0].'\">");
+            } 
+            </script>';
+        }*/
     ?>
     <head>
         <link rel="stylesheet" href="../stylesheet.css">
