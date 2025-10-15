@@ -18,7 +18,6 @@
                         k++;
                     }
                     lengths[i] = k;
-                    //JSEncodeJSON(newData[i], k);
                 }
 
                 newDataSimple[0] = document.getElementById("teacher").value;
@@ -66,11 +65,6 @@
     <body>
         <div class="wrapper">
             <div>
-                <form>
-                <button type="button" onclick="CompileInputs()">Save and Update Database</button>
-                </form>
-            </div>
-            <div>
                 <?php
                     $dispNames = array("Baking Ingredients", "Bread, Pasta, Rice", "Chilled Food (Bacon, Salami, etc)", "Dairy & Eggs", "Dried Herbs & Spices", "Fresh Fruit & Herbs", "Frozen Food", "Other", "Raw Meat", "Chicken, Fish", "Sauces, Condiments", "Tinned Food", "Vegetables");
                     $internalNames = array("Baking", "Bread", "Chilled", "Dairy", "Dried", "Fresh", "Frozen", "Other", "Raw", "Sauces", "Tinned", "Vegetables");
@@ -79,6 +73,7 @@
                     $result = $dbconnect->query($sql);
 
                     echo '<h1 id="rowNum">Editing Class Order #'.$_POST["rowSelected"].'</h1>';
+                    echo '<div><form><button type="button" onclick="CompileInputs()">Save and Update Database</button></form></div>';
                     DataToInputField($result, $internalNames, $dispNames);
                 ?>
             </div>

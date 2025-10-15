@@ -152,26 +152,40 @@
                 echo '<input type="text" id="block" value="'.$row["Block"].'">';
                 echo '<input type="text" id="techReq" value="'.$row["TechnicianReq"].'">';
 
-                for ($k = 0; $k < count($names); $k++)
+                for ($k = 0; $k < count($names); $k++) // for each food type
                 {
                     $output = DecodeJSON($row[$names[$k]], 1);
-                    //echo var_dump($output);
-                    echo '<tr><th><h2>'.$titleNames[$k].'</h2></th></tr><tr>';
+                    echo '<tr><th><h2>'.$titleNames[$k].'</h2></th></tr><tr id="InputRow'.$k.'">';
+                    
                     for ($i = 0; $i < count($output); $i++)
                     {
-                        echo '<td>';
-                        echo '<h3>Ingredient #'.($i+1).'</h3>';
-                        echo 'Name: <input type="text" id="k'.$k.'n'.$i.'" value="'.$output[$i][1].'">'; // id="k3n4" = dairy ingredient number[4] name
-                        echo '<br>';
-                        echo 'Quantity: <input type="text" id="k'.$k.'q'.$i.'" value="'.$output[$i][0].'">';
-                        echo '<td>';
+                        /*try 
+                        {
+                            if(strlen($output[$i][1]) > 0)
+                            {*/
+                                echo '<td>';
+                                echo '<h3>Ingredient #'.($i+1).'</h3>';
+                                echo 'Name: <input type="text" id="k'.$k.'n'.$i.'" value="'.$output[$i][1].'">'; // id="k3n4" = dairy ingredient number[4] name
+                                echo '<br>';
+                                echo 'Quantity: <input type="text" id="k'.$k.'q'.$i.'" value="'.$output[$i][0].'">';
+                                echo '</td>';
+                            /*}
+                        }
+                        catch
+                        {
+                            
+                        }*/
+
                     }
+                    echo '<td id="createNew'.$k.'#'.$i.'"><button  type="button" onclick="AddIngredient('.$k.', '.count($output).')">Add Another Ingredient</button></td>';
                     echo "</tr>";
                 }
                 echo "</table>";
             }
             echo "</form>";
         }
+
+        
         /*
         function CreateInputFieldsWithError($i, $k, $data)
         {
@@ -238,6 +252,100 @@
             {
                 window.location.replace("https://php.papamoacollege.school.nz/3DIG/zaya.cole/index.php");
             }
+
+            function AddIngredient(foodType, i)
+            {
+                document.getElementById("createNew"+foodType+"#"+i).innerHTML = '<td><h3>Ingredient #'+(i+1)+'</h3> Name: <input type="text" id="k'+foodType+'n'+i+'" value=""><br>Quantity: <input type="text" id="k'+foodType+'q'+i+'" value=""></td>';
+                document.getElementById("InputRow"+foodType).innerHTML += '<td id="createNew'+foodType+'#'+(i+1)+'"><button  type="button" onclick="AddIngredient('+foodType+', '+(i+1)+')">Add Another Ingredient</button></td>';
+            }
+
+            function CompareCombine()
+            {
+                // get data from DOM elements
+
+                var inconsistant = new Array();
+                var content = new Array();
+
+                let inconsistantDiv = document.getElementById("inconsistantDiv");
+                let contentDiv = document.getElementById("contentDiv");
+
+                for (const child of inconsistantDiv.children) 
+                {
+                    inconsistant.push(child.value);
+                }
+
+                for (let child of contentDiv.children) 
+                {
+                    content.push(child.value);
+
+                }
+
+                
+
+                console.log(inconsistant);
+                console.log(content);
+
+                // assuming inconsistant[] is the raw HTML of the input fields
+
+                inconsistant = inconsistant.filter(CheckForInputField);
+                content = content.filter(CheckForInputField);
+                /*content = content.filter() => ({
+                    return string.startsWith("<input ");
+                });*/
+
+                console.log(inconsistant);
+                console.log(content);
+                // comparing values
+
+                // for each element, get the indexes of all identical elements across both arrays
+/*
+                for (let i = 0; i < inconsistant.length; i++)
+                {
+                    for (let j = 0; j < content.length; j++)
+                    {
+                        let matches = inconsistant.filter() => {
+                            return inconsistant[i];
+                        }
+                    }
+                    /*
+                        for (let k = 0; k < inconsistant.length; k++)
+                        {
+                            for (let l = 0; l < content.length; l++)
+                            {
+                                if (inconsistant.indexOf(inconsistant[i], k) != -1 && i != k)
+                            }
+                        }
+                    }*/
+              //  }
+
+                
+                
+
+
+
+
+                //let inconsistantDiv = document.querySelector(".inconsistantDiv");//[id=inconsistant i'+i+'j'+j+'n]);
+                //let content = inconsistantDiv.querySelectorAll("input");
+                //console.log(content.textContent);
+                
+                //console.log(document.getElementById("inconsistantDiv").textContent);
+                //let answer = prompt("Error: the units used for "document.getElementById("inconsistant i"+i+"j"+j+"n").value+" are inconsistant across these class orders despite being the same ingredient. Please sum these quantities: "+)
+
+            }
+
+            function CheckForInputField(data)
+            {
+                if (data.startsWith("<input ") == true)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+
         </script>
     </head>
 </html>

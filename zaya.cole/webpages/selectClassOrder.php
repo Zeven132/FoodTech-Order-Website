@@ -6,7 +6,7 @@
                 <h1>Edit Existing Class Order</h1>
                 <form action="editClassOrder.php" method="POST">
                     <label for="rowSelect">Input RowID of Existing Order:</label>
-                    <input type="text" id="rowSelect" name="rowSelected">
+                    <input type="number" id="rowSelect" name="rowSelected" min="0" step="1">
                     <input type="submit">
                 </form>
             </div>

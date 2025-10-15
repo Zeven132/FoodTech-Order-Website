@@ -45,6 +45,9 @@
         }
 
         $ingredientData = array();
+
+
+ 
         $ClassRowIDs = explode(", ", $_POST["rowSelect"]);
         sort($ClassRowIDs);
         $Catagories = array("Baking", "Bread", "Chilled", "Dairy", "Dried", "Fresh", "Frozen", "Other", "Raw", "Sauces", "Tinned", "Vegetables");
@@ -52,6 +55,256 @@
         
         // SCRIPT EXEC STARTS HERE ----------------------------------------------------------------------------------
 
+
+        foreach ($ClassRowIDs as $ClassRow) //exec per class order
+        {
+            //echo "<table>";
+            $sql = "SELECT Baking, Bread, Chilled, Dairy, Dried, Fresh, Frozen, Other, Raw, Sauces, Tinned, Vegetables FROM zayacole_class_order WHERE rowID = $ClassRow";
+            $result = $dbconnect->query($sql);
+
+            while ($row = $result->fetch_assoc()) 
+            {
+                for ($cata = 0; $cata < 12; $cata++) //exec per food type
+                {
+                    //echo '<tr><td>'."$Catagories[$cata]<br>";
+                    
+                    $ingredientData[$id][$cata] = DecodeJSON($row[$Catagories[$cata]], 1);
+                    
+                    /*if(strlen($ingredientData[$id][$cata][0]) == 0)
+                    {
+                        echo "woah";
+                    }*/
+                    
+
+                    /*for ($foodItem = 0; $foodItem < count($ingredientData[$id][$cata]); $foodItem++) //exec per food item
+                    {
+                        if (isset($ingredientData[$id][$cata][$foodItem][1]))
+                        {
+                            //echo '</td><td>'.$ingredientData[$id][$cata][$foodItem][0]." : ".$ingredientData[$id][$cata][$foodItem][1];
+                        }
+                    }*/
+
+                    //echo "</td></tr>";
+
+
+                    
+                    
+                        
+                }
+                //echo var_dump($ingredientData);   
+                
+            } 
+            //echo "</table><br>";
+            $id++;
+        }
+
+
+        $consolidatedArr = array();
+
+        for ($i = 0; $i < count($ingredientData); $i++)
+        {
+            for ($j = 0; $j < count($ingredientData[$i]); $j++)
+            {
+                for ($k = 0; $k < count($ingredientData[$i][$j]); $k++)
+                {
+                    $consolidatedArr[$j][][0] = $ingredientData[$i][$j][$k][0];
+                    $consolidatedArr[$j][count($consolidatedArr[$j])-1][1] = $ingredientData[$i][$j][$k][1];
+                }
+            }
+        }
+
+
+        // for each ingredient name, check if there are any duplicates across the whole thing
+
+        $inconsistantArr = array();
+
+
+        for ($i = 0; $i < count($consolidatedArr); $i++) // for each category
+        {
+            for ($j = 0; $j < count($consolidatedArr[$i]); $j++) // for each ingredient
+            {
+                //echo "<br>";
+                //echo $consolidatedArr[$i][$j][1];
+                //echo "<br>";
+                if (strlen($consolidatedArr[$i][$j][1]) > 0)
+                {
+                    for ($k = 0; $k < count($consolidatedArr); $k++) // for each category (again)
+                    {
+                        for ($l = 0; $l < count($consolidatedArr[$k]); $l++) // for each ingredient (again)
+                        {
+                            if(!($i == $k && $j == $l))
+                            {
+                                //echo $consolidatedArr[$k][$l][1];
+                                //echo "   ";
+                                if (strcasecmp($consolidatedArr[$i][$j][1], $consolidatedArr[$k][$l][1]) == 0 && strlen($consolidatedArr[$i][$j][1]) > 0)
+                                {
+                                    $inconsistantArr[$k][][0] = $consolidatedArr[$k][$l][0];
+                                    $inconsistantArr[$k][count($inconsistantArr[$k])-1][1] = $consolidatedArr[$k][$l][1];
+                                    //$inconsistantArr[$k][count($inconsistantArr[$k])-1][2] = 'i'.$i.'j'.$j;
+                                    array_splice($consolidatedArr[$k], $l, 1);
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+        //echo var_dump($consolidatedArr);
+
+
+        // inconsistant arr is now a list of all
+        echo var_dump($inconsistantArr);
+
+        $formattedArr = array();
+
+        for ($i = 0; $i < 12; $i++)
+        {
+            if(isset($inconsistantArr[$i]))
+            {
+                for ($j = 0; $j < count($inconsistantArr[$i])/*+count($inconsistantArr[$i])*/; $j++)
+                {
+                    if(isset($inconsistantArr[$i][$j][1]))
+                    {
+                        //echo '<input type="text" id="inconsistant i'.$i.'j'.$j.'n" value="'.$inconsistantArr[$i][$j][1].'"><input type="text" id="inconsistant i'.$i.'j'.$j.'q" value="'.$inconsistantArr[$i][$j][0].'"><input type="text" id="inconsistant i'.$i.'j'.$j.'key" value="'.$inconsistantArr[$i][$j][1].'"><br>';
+                        $formattedArr[][][0] = $inconsistantArr[$i][$j][0];
+                        $formattedArr[count($formattedArr)-1][count($formattedArr[count($formattedArr)-1])-1][1] = $inconsistantArr[$i][$j][1];
+                        //echo $inconsistantArr[$i][$j][1];
+                        
+                        //echo EncodeJSON($inconsistantArr[$i][$j]);
+
+                        /*echo "<br>";
+                        echo count($inconsistantArr); 
+                        echo "<br>";
+                        echo count($inconsistantArr[$i]); */
+                    }
+                    /*if (strlen($inconsistantArr[$i][$j][1]) == 0)
+                    {
+                        echo 'rahhh address me!!';
+                    }
+                    else
+                    {*/
+
+                // }
+                    
+                }
+                echo ("<br>");
+            }
+
+        }
+
+
+
+        
+        //echo var_dump($formattedArr);
+        /*for ($i = 0; $i < count($formattedArr); $i++)
+        {
+            for ($j = 0; $j < count($formattedArr[$i]); $j++)
+            {
+                echo $formattedArr[$i][$j][1];
+            }
+            
+        }*/
+        echo var_dump($formattedArr);
+        
+        //$print = "{";
+        echo '<div id="inconsistantDiv">';
+        for($i = 0; $i < count($formattedArr); $i++)
+        {
+            for ($j = 0; $j < count($formattedArr[$i]); $j++)
+            {
+                echo '<input type="text" id="inconsistant i'.$i.'j'.$j.'n" value="'.$formattedArr[$i][$j][1].'"><input type="text" id="inconsistant i'.$i.'j'.$j.'q" value="'.$formattedArr[$i][$j][0].'">';
+                
+                /*
+                //echo $formattedArr[$i][$j][1];
+                if ($print == "{")
+                {
+                    $print += '[';//.$formattedArr[$i][$j][1].', '.$formattedArr[$i][$j][0].']';
+                    $print += $formattedArr[$i][$j][1];
+                    $print += ", ";
+                    $print += $formattedArr[$i][$j][0];
+                    $print += ']';
+                }
+                else
+                {
+                    $print += ', [';//.$formattedArr[$i][$j][1].', '.$formattedArr[$i][$j][0].']';
+                    $print += $formattedArr[$i][$j][1];
+                    $print += ", ";
+                    $print += $formattedArr[$i][$j][0];
+                    $print += ']';
+                
+                    //$print += ', ['.$formattedArr[$i][$j][1].', '.$formattedArr[$i][$j][0].']';
+                }*/
+            }
+        }
+        echo '</div>';
+        //$print += "}";
+        //echo var_dump($print);
+
+        
+        //echo '</div>';
+
+        echo '<div class="wrapper">';
+
+        echo '<div id="contentDiv">';
+        for ($i = 0; $i < 12; $i++)
+        {
+            for ($j = 0; $j < count($consolidatedArr[$i])/*+count($inconsistantArr[$i])*/; $j++)
+            {
+                /*if()
+                {
+                    
+                }*/
+                /*if (strlen($inconsistantArr[$i][$j][1]) == 0)
+                {
+                    echo 'rahhh address me!!';
+                }
+                else
+                {*/
+                    echo '<input type="text" id="i'.$i.'j'.$j.'n" value="'.$consolidatedArr[$i][$j][1].'"><input type="text" id="i'.$i.'j'.$j.'q" value="'.$consolidatedArr[$i][$j][0].'"><br>';
+               // }
+                
+            }
+            echo ("<br>");
+        }
+        echo '</div>';
+        echo '</div>';
+/*
+        for($i = 0; $i < count($formattedArr); $i++)
+        {
+            for ($j = 0; $j < count($formattedArr[$i]); $j++)
+            {
+                echo '<script>CompareCombine('.$i.', '.$j.');</script>';
+            }
+        }*/
+
+
+
+
+/*for ($i = 0; $i < 12; $i++)
+{
+    for($k = 0; $k < count($consolidatedArr[$i]); $k++)
+    {
+        // rest in peace, atrocious code..
+        echo 
+        '<script type="text/javascript">
+        if(document.getElementById("'.$i.'-'.$k.'-0") != null)
+        {
+            document.write(\'<input type="text" value="'.$consolidatedArr[$i][$k][1].'"><input type="text" value="\'+document.getElementById("'.$i.'-'.$k.'-0").value+\'">\');
+
+        }
+        else
+        {
+            document.write(\'<input type="text" id="'.$i.'-'.$k.'-1" value="'.$consolidatedArr[$i][$k][1].'"><input type="text" id="'.$i.'-'.$k.'-0" value="'.$consolidatedArr[$i][$k][0].'">\');
+        } 
+        </script>';
+        echo ("<br>");
+    }
+}*/
+
+
+/*
         foreach ($ClassRowIDs as $ClassRow) //exec per class order
         {
             //echo "<table>";
@@ -94,7 +347,7 @@
 
         // COMPARING INGREDIENT DATA AND COMBINING ---------------------------------------------------
 
-        $consolidatedArr = array(); // output
+        /*$consolidatedArr = array(); // output
 
         for ($i = 0; $i < count($ingredientData); $i++) // for each order
         {
@@ -201,37 +454,17 @@
                             }
                         }
 
-                    }*/
+                    }
                     
                     
 
                 }
             }
-        }
+        }*/
 
         //echo "<br><br>";
         //echo var_dump($consolidatedArr);
-        for ($i = 0; $i < 12; $i++)
-        {
-            for($k = 0; $k < count($consolidatedArr[$i]); $k++)
-            {
-                //CreateInputFieldsWithError($i, $k, $consolidatedArr);
-                echo 
-                '<script type="text/javascript">
-                if(document.getElementById("'.$i.'-'.$k.'-0") != null)
-                {
-                    document.write(\'<input type="text" value="'.$consolidatedArr[$i][$k][1].'"><input type="text" value="\'+document.getElementById("'.$i.'-'.$k.'-0").value+\'">\');
 
-                }
-                else
-                {
-                    document.write(\'<input type="text" id="'.$i.'-'.$k.'-1" value="'.$consolidatedArr[$i][$k][1].'"><input type="text" id="'.$i.'-'.$k.'-0" value="'.$consolidatedArr[$i][$k][0].'">\');
-                } 
-                </script>';
-                echo ("<br>");
-            }
-            echo ("<br>");
-        }
         /*
         $sql = '
         INSERT INTO zayacole_department_order (Baking, Bread, Chilled, Dairy, Dried, Fresh, Frozen, Other, Raw, Sauces, Tinned, Vegetables, TechnicianReq, DateCreated)
@@ -245,9 +478,14 @@
                     document.getElementById("temp").id = "'.$i.'-'.$k.'";
 */
         ?>
+
             
-    <body>
-        <div class="wrapper">
-        </div>
+    <body onload="">
+        <script>
+            window.addEventListener("DOMContentLoaded", (event) => {
+                CompareCombine();
+            });
+        </script>
+
     </body>
 </html>
