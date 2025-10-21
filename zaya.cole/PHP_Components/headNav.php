@@ -29,11 +29,8 @@
         // decodes JSON from database. initially attempted to use existing JSON framework but it wouldnt work
         function DecodeJSON($string, $formatCase) // 1 = decode to 2d arr; 2 = decode to string for display
         {
-        
             $string = str_replace("{[", "", $string);
             $string = str_replace("]}", "", $string);
-
-            
 
             switch($formatCase)
             {
@@ -58,7 +55,6 @@
                     return $string;
                 break;
             }
-
         }
         
         // takes a 2d arr and formats it for database submission
@@ -95,7 +91,7 @@
                     "</td><td>".$row['Recipe'].
                     "</td><td>".$row['NumOfStudents'].
                     "</td><td>".$row['Block'].
-                    "</td><td>".DecodeJson($row['Baking'], 2).
+                    "</td><td>".DecodeJSON($row['Baking'], 2).
                     "</td><td>".DecodeJson($row['Bread'], 2).
                     "</td><td>".DecodeJson($row['Chilled'], 2).
                     "</td><td>".DecodeJson($row['Dairy'], 2).
@@ -260,16 +256,28 @@
             }
 
             var allIngredients2D = Array();
+            var otherData = Array ();
 
             function CompareCombine()
             {
                 // get data from DOM elements
 
+                
                 var inconsistant = new Array();
                 var content = new Array();
+                
 
+                let otherDataDiv = document.getElementById("otherDataDiv");
                 let inconsistantDiv = document.getElementById("inconsistantDiv");
                 let contentDiv = document.getElementById("contentDiv");
+
+                for (const child of otherDataDiv.children) 
+                {
+                    if (child.value != undefined && child.value != "")
+                    {
+                        otherData.push(child.value);
+                    }
+                }
 
                 for (const child of inconsistantDiv.children) 
                 {
@@ -277,7 +285,6 @@
                     {
                         inconsistant.push(child.value);
                     }
-
                 }
 
                 for (let child of contentDiv.children) 
@@ -288,12 +295,6 @@
                     }
                 }
 
-                
-
-                console.log(inconsistant);
-                console.log(content);
-
-                // assuming inconsistant[] is the raw HTML of the input fields
                 var content2D = new Array();
                 var inconsistant2D = new Array();
 
@@ -331,7 +332,6 @@
 
                     for (let j = 0; j < allIngredients2D.length; j++)
                     {
-                        //console.log(j);
                         if (i != j && allIngredients2D[i][1].toLowerCase() == allIngredients2D[j][1].toLowerCase())
                         {
                             matches[0].push(allIngredients2D[j][0]);
@@ -374,7 +374,7 @@
                         {
 
                             // if not combinable:
-                            allIngredients2D[i][0] = CleanInput(prompt("Error: the units used for"+allIngredients2D[i][1]+" are inconsistant across these class orders despite being the same ingredient. Please sum these quantities:"+matches[0]));
+                            allIngredients2D[i][0] = CleanInput(prompt("Error: the units used for "+allIngredients2D[i][1]+" are inconsistant across these class orders despite being the same ingredient.\nPlease sum these quantities: "+matches[0]));
                         }
                         
                         // after either
@@ -389,9 +389,36 @@
                     }
                 }
 
-                //document.getElementById("output").textContent = allIngredients2D;
-                                
-                
+                // Formatting done, now create the input fields
+                let dispNames = ["Baking Ingredients", "Bread, Pasta, Rice", "Chilled Food (Bacon, Salami, etc)", "Dairy & Eggs", "Dried Herbs & Spices", "Fresh Fruit & Herbs", "Frozen Food", "Other", "Raw Meat", "Chicken, Fish", "Sauces, Condiments", "Tinned Food", "Vegetables"];
+                let internalNames = ["Baking", "Bread", "Chilled", "Dairy", "Dried", "Fresh", "Frozen", "Other", "Raw", "Sauces", "Tinned", "Vegetables"];      
+                document.getElementById("wrapper").innerHTML += "<h1>Creating Department Order</h1>";
+                for (let i = 0; i < 12; i++)
+                {
+
+
+                    //output[i] += '{'
+                    //output[i] = new Array(2).fill("");
+                    document.getElementById("wrapper").innerHTML += '<h2>'+dispNames[i]+'</h2>';
+                    for (let j = 0; j < allIngredients2D.length; j++)
+                    {
+                        
+                        if (allIngredients2D[j][2] == i)
+                        {
+                            document.getElementById("wrapper").innerHTML += ('<input type="text" id="k'+i+'q'+j+'" value="'+allIngredients2D[j][0]+'"><input type="text" id="k'+i+'n'+j+'" value="'+allIngredients2D[j][1]+'"><br>')
+                            /*if (output[i] == '{')
+                            {
+                                output[i] += '['+allIngredients2D[j][1]+", "+allIngredients2D[j][0]+"]";
+                            }
+                            else
+                            {
+                                output[i] += ', ['+allIngredients2D[j][1]+", "+allIngredients2D[j][0]+"]";
+                            }*/
+                        }
+                        
+                    } 
+                    //output[i] += "}";
+                }
 
 
 
@@ -417,20 +444,51 @@
                     {
                         if (allIngredients2D[j][2] == i)
                         {
+                            if (document.getElementById("k"+i+"q"+j).value.length == 0)
+                            {
+                                document.getElementById("k"+i+"q"+j).value = "N/A";
+                            }
+
                             if (output[i] == '{')
                             {
-                                output[i] += '['+allIngredients2D[j][1]+", "+allIngredients2D[j][0]+"]";
+                                output[i] += '['+document.getElementById("k"+i+"q"+j).value+", "+document.getElementById("k"+i+"n"+j).value+"]";
                             }
                             else
                             {
-                                output[i] += ', ['+allIngredients2D[j][1]+", "+allIngredients2D[j][0]+"]";
+                                output[i] += ', ['+document.getElementById("k"+i+"q"+j).value+", "+document.getElementById("k"+i+"n"+j).value+"]";
                             }
                         }
                     } 
                     output[i] += "}";
                 }
 
-                console.log(output);
+                let timeNow = ((new Date().getFullYear())+"-"+(new Date().getMonth() + 1)+"-"+(new Date().getDate())+" "+(new Date().getHours())+":"+(new Date().getMinutes())+":"+(new Date().getSeconds()));
+                
+                $.post("uploadDepartmentData.php", { 
+                    classIDs: otherData[0],
+                    practicalDay: otherData[1],
+                    dateCreated: timeNow,
+                    class: otherData[2], 
+                    roomNum: otherData[3], 
+                    students: otherData[4], 
+                    recipes: otherData[5], 
+                    block: otherData[6], 
+                    techReq: otherData[7], 
+                    baking: output[0], 
+                    bread: output[1], 
+                    chilled: output[2], 
+                    dairy: output[3], 
+                    dried: output[4], 
+                    fresh: output[5], 
+                    frozen: output[6], 
+                    other: output[7], 
+                    raw: output[8], 
+                    sauces: output[9], 
+                    tinned: output[10], 
+                    vegetables: output[11]});
+                /*console.log(otherData);
+                console.log((new Date().getFullYear())+"-"+(new Date().getMonth() + 1)+"-"+(new Date().getDate())+" "+(new Date().getHours())+":"+(new Date().getMinutes())+":"+(new Date().getSeconds()));
+                console.log(output);*/
             }
 
             function CheckForInputField(data)

@@ -3,7 +3,7 @@
         include("../PHP_Components/headNav.php");
 
         // defining functions & vars
-
+/*
         $inconsistantNum = 0;
         
         function CompareCombine($string, $string1, $j, $k)
@@ -42,61 +42,53 @@
                 return false;
                 
             }
-        }
+        }*/
 
         $ingredientData = array();
 
 
  
-        $ClassRowIDs = explode(", ", $_POST["rowSelect"]);
+        $ClassRowIDs = explode(", ", /*preg_replace('/[^0-9.]/', "",*/ $_POST["rowSelect"]/*)*/);
         sort($ClassRowIDs);
+
+        $classData = array(8);
+        $classData[0] = implode("; ", $ClassRowIDs);
+
+        $otherDataNames = array("RowID", "TeacherCode", "PracticalDay", "Class", "RoomNum", "Recipe", "NumOfStudents", "Block", "TechnicianReq");
         $Catagories = array("Baking", "Bread", "Chilled", "Dairy", "Dried", "Fresh", "Frozen", "Other", "Raw", "Sauces", "Tinned", "Vegetables");
         $id = 0;
         
         // SCRIPT EXEC STARTS HERE ----------------------------------------------------------------------------------
 
 
-        foreach ($ClassRowIDs as $ClassRow) //exec per class order
+        foreach ($ClassRowIDs as $ClassRow) // exec per class order
         {
-            //echo "<table>";
-            $sql = "SELECT Baking, Bread, Chilled, Dairy, Dried, Fresh, Frozen, Other, Raw, Sauces, Tinned, Vegetables FROM zayacole_class_order WHERE rowID = $ClassRow";
+            $sql = "SELECT * FROM zayacole_class_order WHERE rowID = $ClassRow";
             $result = $dbconnect->query($sql);
 
             while ($row = $result->fetch_assoc()) 
             {
-                for ($cata = 0; $cata < 12; $cata++) //exec per food type
+                for ($i = 1; $i < count($otherDataNames); $i++) // exec per other row
                 {
-                    //echo '<tr><td>'."$Catagories[$cata]<br>";
+                    $classData[$i] = $classData[$i].$row[$otherDataNames[$i]].'; ';
                     
-                    $ingredientData[$id][$cata] = DecodeJSON($row[$Catagories[$cata]], 1);
-                    
-                    /*if(strlen($ingredientData[$id][$cata][0]) == 0)
-                    {
-                        echo "woah";
-                    }*/
-                    
-
-                    /*for ($foodItem = 0; $foodItem < count($ingredientData[$id][$cata]); $foodItem++) //exec per food item
-                    {
-                        if (isset($ingredientData[$id][$cata][$foodItem][1]))
-                        {
-                            //echo '</td><td>'.$ingredientData[$id][$cata][$foodItem][0]." : ".$ingredientData[$id][$cata][$foodItem][1];
-                        }
-                    }*/
-
-                    //echo "</td></tr>";
-
-
-                    
-                    
-                        
                 }
-                //echo var_dump($ingredientData);   
-                
+
+                for ($cata = 0; $cata < 12; $cata++) // exec per food type
+                {
+                    $ingredientData[$id][$cata] = DecodeJSON($row[$Catagories[$cata]], 1);
+                }
             } 
-            //echo "</table><br>";
             $id++;
         }
+
+        //echo var_dump($classData);
+        echo '<div id="otherDataDiv">';
+        for ($i = 0; $i < count($otherDataNames); $i++)
+        {
+            echo '<input type="text" class="invis" value="'.$classData[$i].'">';
+        }
+        echo '</div';
 
 
         $consolidatedArr = array();
@@ -156,7 +148,7 @@
 
 
         // inconsistant arr is now a list of all
-        echo var_dump($inconsistantArr);
+        //echo var_dump($inconsistantArr);
 
         $formattedArr = array();
 
@@ -208,7 +200,7 @@
             }
             
         }*/
-        echo var_dump($formattedArr);
+       // echo var_dump($formattedArr);
         
 
         echo '<div id="inconsistantDiv">';
@@ -218,7 +210,7 @@
             {
                 if ($formattedArr[$i][$j][1] != "")
                 {
-                    echo '<input type="text" id="inconsistant i'.$i.'j'.$j.'n" value="'.$formattedArr[$i][$j][1].'"><input type="text" id="inconsistant i'.$i.'j'.$j.'q" value="'.$formattedArr[$i][$j][0].'"><input type="text" id="inconsistant i'.$i.'j'.$j.'q" value="'.$formattedArr[$i][$j][2].'">';
+                    echo '<input type="text" class="invis" value="'.$formattedArr[$i][$j][1].'"><input type="text" class="invis" value="'.$formattedArr[$i][$j][0].'"><input type="text" class="invis" value="'.$formattedArr[$i][$j][2].'">';
                 }
                 
                 /*
@@ -269,7 +261,7 @@
                 {*/
                 if ($consolidatedArr[$i][$j][1] != "")
                 {
-                    echo '<input type="text" id="i'.$i.'j'.$j.'n" value="'.$consolidatedArr[$i][$j][1].'"><input type="text" id="i'.$i.'j'.$j.'q" value="'.$consolidatedArr[$i][$j][0].'"><input type="text" value="'.$i.'">';
+                    echo '<input type="text" class="invis" value="'.$consolidatedArr[$i][$j][1].'"><input class="invis" type="text" value="'.$consolidatedArr[$i][$j][0].'"><input type="text" class="invis" value="'.$i.'">';
                 }
                      // }
                 
@@ -494,8 +486,9 @@
                 CompareCombine();
             });
         </script>
+        <div class="wrapper" id="wrapper">
 
-        <button type="button" onclick="SubmitDepartmentOrder()">Upload to Database and Exit Page</button>
-
+            <button type="button" onclick="SubmitDepartmentOrder()">Upload to Database and Exit Page</button>
+        </div>
     </body>
 </html>
