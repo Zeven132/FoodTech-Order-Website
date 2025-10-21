@@ -259,6 +259,8 @@
                 document.getElementById("InputRow"+foodType).innerHTML += '<td id="createNew'+foodType+'#'+(i+1)+'"><button  type="button" onclick="AddIngredient('+foodType+', '+(i+1)+')">Add Another Ingredient</button></td>';
             }
 
+            var allIngredients2D = Array();
+
             function CompareCombine()
             {
                 // get data from DOM elements
@@ -271,13 +273,19 @@
 
                 for (const child of inconsistantDiv.children) 
                 {
-                    inconsistant.push(child.value);
+                    if (child.value != undefined && child.value != "")
+                    {
+                        inconsistant.push(child.value);
+                    }
+
                 }
 
                 for (let child of contentDiv.children) 
                 {
-                    content.push(child.value);
-
+                    if (child.value != undefined && child.value != "")
+                    {
+                        content.push(child.value);
+                    }
                 }
 
                 
@@ -286,39 +294,103 @@
                 console.log(content);
 
                 // assuming inconsistant[] is the raw HTML of the input fields
+                var content2D = new Array();
+                var inconsistant2D = new Array();
 
-                inconsistant = inconsistant.filter(CheckForInputField);
-                content = content.filter(CheckForInputField);
-                /*content = content.filter() => ({
-                    return string.startsWith("<input ");
-                });*/
+                // formats into 2D arr
+                for (let i = 0; i < content.length; i++)
+                {
+                    content2D[i] = new Array(3);
+                    content2D[i][0] = content[i+1];
+                    content2D[i][1] = content[i];
+                    content2D[i][2] = content[i+2];
+                    i += 2;
+                }
 
-                console.log(inconsistant);
-                console.log(content);
-                // comparing values
-
-                // for each element, get the indexes of all identical elements across both arrays
-/*
                 for (let i = 0; i < inconsistant.length; i++)
                 {
-                    for (let j = 0; j < content.length; j++)
+                    inconsistant2D[i] = new Array(3);
+                    inconsistant2D[i][0] = inconsistant[i+1];
+                    inconsistant2D[i][1] = inconsistant[i];
+                    inconsistant2D[i][2] = inconsistant[i+2];
+                    i += 2;
+                }
+
+                allIngredients2D = inconsistant2D.concat(content2D);
+                allIngredients2D = allIngredients2D.filter(item => 1 == 1);
+                console.log(allIngredients2D[1]);
+
+
+                for (let i = 0; i < allIngredients2D.length; i++) // for each ingredient
+                {
+                    let matches = new Array(2);
+                    matches[0] = new Array().fill("");
+                    matches[1] = new Array().fill("");
+                    matches[0][0] = allIngredients2D[i][0];
+                    matches[1][0] = i;
+
+                    for (let j = 0; j < allIngredients2D.length; j++)
                     {
-                        let matches = inconsistant.filter() => {
-                            return inconsistant[i];
+                        //console.log(j);
+                        if (i != j && allIngredients2D[i][1].toLowerCase() == allIngredients2D[j][1].toLowerCase())
+                        {
+                            matches[0].push(allIngredients2D[j][0]);
+                            matches[1].push(j);
+                            console.log(allIngredients2D[j][0]);
+                            console.log(allIngredients2D[j][1]);
                         }
                     }
-                    /*
-                        for (let k = 0; k < inconsistant.length; k++)
-                        {
-                            for (let l = 0; l < content.length; l++)
-                            {
-                                if (inconsistant.indexOf(inconsistant[i], k) != -1 && i != k)
-                            }
-                        }
-                    }*/
-              //  }
 
-                
+                    if (matches[0].length > 1)
+                    {
+                        let matchesLetters = Array();
+                        //matchesLetters = matches[0].forEach(item => item = item.replace(/[^A-z]/g, ""));
+
+                        for (let k = 0; k < matches[0].length; k++)
+                        {
+                            matchesLetters[k] = matches[0][k].replace(/[^A-z]/g, "");
+                        }
+
+                        if (matchesLetters.every(item => item == matchesLetters[0]))
+                        {
+                            let matchesNumbers = Array();
+
+                            for (let k = 0; k < matches[0].length; k++)
+                            {
+                                matchesNumbers[k] = matches[0][k].replace(/[^0-9.]/g, "");
+                            }
+                            //atchesNumbers = matches[0].forEach(item => item = item.replace(/[^0-9.]/g, ""));
+
+                            let ingredientSum = 0;
+
+                            for (let k = 0; k < matches[0].length; k++)
+                            {
+                                ingredientSum = ingredientSum + parseInt(matchesNumbers[k]);
+                            }
+
+                            allIngredients2D[i][0] = allIngredients2D[i][0].replace(matchesNumbers[0], ingredientSum);
+                        }
+                        else
+                        {
+
+                            // if not combinable:
+                            allIngredients2D[i][0] = CleanInput(prompt("Error: the units used for"+allIngredients2D[i][1]+" are inconsistant across these class orders despite being the same ingredient. Please sum these quantities:"+matches[0]));
+                        }
+                        
+                        // after either
+                        for (let k = 1; k < matches[0].length; k++)
+                        {
+                            allIngredients2D.splice(matches[1][k], 1); // depending on how splice works this could break the index
+                        }
+                    }
+                    else
+                    {
+                        console.log("passed");
+                    }
+                }
+
+                //document.getElementById("output").textContent = allIngredients2D;
+                                
                 
 
 
@@ -326,11 +398,39 @@
 
                 //let inconsistantDiv = document.querySelector(".inconsistantDiv");//[id=inconsistant i'+i+'j'+j+'n]);
                 //let content = inconsistantDiv.querySelectorAll("input");
-                //console.log(content.textContent);
+                console.log(allIngredients2D);
                 
                 //console.log(document.getElementById("inconsistantDiv").textContent);
                 //let answer = prompt("Error: the units used for "document.getElementById("inconsistant i"+i+"j"+j+"n").value+" are inconsistant across these class orders despite being the same ingredient. Please sum these quantities: "+)
 
+            }
+
+            function SubmitDepartmentOrder()
+            {
+                let output = Array(12).fill("");
+
+                for (let i = 0; i < 12; i++)
+                {
+                    output[i] += '{'
+                    //output[i] = new Array(2).fill("");
+                    for (let j = 0; j < allIngredients2D.length; j++)
+                    {
+                        if (allIngredients2D[j][2] == i)
+                        {
+                            if (output[i] == '{')
+                            {
+                                output[i] += '['+allIngredients2D[j][1]+", "+allIngredients2D[j][0]+"]";
+                            }
+                            else
+                            {
+                                output[i] += ', ['+allIngredients2D[j][1]+", "+allIngredients2D[j][0]+"]";
+                            }
+                        }
+                    } 
+                    output[i] += "}";
+                }
+
+                console.log(output);
             }
 
             function CheckForInputField(data)

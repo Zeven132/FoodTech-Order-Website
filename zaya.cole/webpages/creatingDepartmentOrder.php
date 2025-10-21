@@ -140,6 +140,7 @@
                                 {
                                     $inconsistantArr[$k][][0] = $consolidatedArr[$k][$l][0];
                                     $inconsistantArr[$k][count($inconsistantArr[$k])-1][1] = $consolidatedArr[$k][$l][1];
+                                    $inconsistantArr[$k][count($inconsistantArr[$k])-1][2] = $k;
                                     //$inconsistantArr[$k][count($inconsistantArr[$k])-1][2] = 'i'.$i.'j'.$j;
                                     array_splice($consolidatedArr[$k], $l, 1);
                                 }
@@ -170,6 +171,7 @@
                         //echo '<input type="text" id="inconsistant i'.$i.'j'.$j.'n" value="'.$inconsistantArr[$i][$j][1].'"><input type="text" id="inconsistant i'.$i.'j'.$j.'q" value="'.$inconsistantArr[$i][$j][0].'"><input type="text" id="inconsistant i'.$i.'j'.$j.'key" value="'.$inconsistantArr[$i][$j][1].'"><br>';
                         $formattedArr[][][0] = $inconsistantArr[$i][$j][0];
                         $formattedArr[count($formattedArr)-1][count($formattedArr[count($formattedArr)-1])-1][1] = $inconsistantArr[$i][$j][1];
+                        $formattedArr[count($formattedArr)-1][count($formattedArr[count($formattedArr)-1])-1][2] = $inconsistantArr[$i][$j][2];
                         //echo $inconsistantArr[$i][$j][1];
                         
                         //echo EncodeJSON($inconsistantArr[$i][$j]);
@@ -208,13 +210,16 @@
         }*/
         echo var_dump($formattedArr);
         
-        //$print = "{";
+
         echo '<div id="inconsistantDiv">';
-        for($i = 0; $i < count($formattedArr); $i++)
+        for($i = 0; $i < 12; $i++) //$i < count($formattedArr)
         {
             for ($j = 0; $j < count($formattedArr[$i]); $j++)
             {
-                echo '<input type="text" id="inconsistant i'.$i.'j'.$j.'n" value="'.$formattedArr[$i][$j][1].'"><input type="text" id="inconsistant i'.$i.'j'.$j.'q" value="'.$formattedArr[$i][$j][0].'">';
+                if ($formattedArr[$i][$j][1] != "")
+                {
+                    echo '<input type="text" id="inconsistant i'.$i.'j'.$j.'n" value="'.$formattedArr[$i][$j][1].'"><input type="text" id="inconsistant i'.$i.'j'.$j.'q" value="'.$formattedArr[$i][$j][0].'"><input type="text" id="inconsistant i'.$i.'j'.$j.'q" value="'.$formattedArr[$i][$j][2].'">';
+                }
                 
                 /*
                 //echo $formattedArr[$i][$j][1];
@@ -262,8 +267,11 @@
                 }
                 else
                 {*/
-                    echo '<input type="text" id="i'.$i.'j'.$j.'n" value="'.$consolidatedArr[$i][$j][1].'"><input type="text" id="i'.$i.'j'.$j.'q" value="'.$consolidatedArr[$i][$j][0].'"><br>';
-               // }
+                if ($consolidatedArr[$i][$j][1] != "")
+                {
+                    echo '<input type="text" id="i'.$i.'j'.$j.'n" value="'.$consolidatedArr[$i][$j][1].'"><input type="text" id="i'.$i.'j'.$j.'q" value="'.$consolidatedArr[$i][$j][0].'"><input type="text" value="'.$i.'">';
+                }
+                     // }
                 
             }
             echo ("<br>");
@@ -486,6 +494,8 @@
                 CompareCombine();
             });
         </script>
+
+        <button type="button" onclick="SubmitDepartmentOrder()">Upload to Database and Exit Page</button>
 
     </body>
 </html>
