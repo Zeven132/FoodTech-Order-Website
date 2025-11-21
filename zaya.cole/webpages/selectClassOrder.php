@@ -6,7 +6,15 @@
                 <h1>Edit Existing Class Order</h1>
                 <form action="editClassOrder.php" method="POST">
                     <label for="rowSelect">Input RowID of Existing Order:</label>
-                    <input type="number" id="rowSelect" name="rowSelected" min="0" step="1">
+                    <?php
+                        $sql = "SELECT MAX(RowID) FROM zayacole_class_order";
+                        $result = $dbconnect->query($sql);
+                        while ($data = $result->fetch_assoc()) 
+                        {
+                            echo '<input type="number" style="width:100px;" id="rowSelect" name="rowSelected" min="0" max="'.$data["MAX(RowID)"].'"step="1">';
+                        }
+                     ?>
+                    
                     <input type="submit">
                 </form>
             </div>

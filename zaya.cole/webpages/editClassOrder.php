@@ -1,9 +1,34 @@
 <html>
-    <?php include("../PHP_Components/headNav.php");?>
+    <?php 
+        include("../PHP_Components/headNav.php");
+        /*$sql = "SELECT * FROM zayacole_class_order WHERE RowID = ".$_POST["rowSelected"];
+        $result = $dbconnect->query($sql);
+
+        while ($row = $result->fetch_assoc())
+        {
+            if (!($row['RowID'])) 
+            {
+                Redirect("https://php.papamoacollege.school.nz/3DIG/zaya.cole/webpages/selectClassOrder.php");
+            }
+            else
+            {
+                echo "gwe";
+            }
+        }
+
+        if (!($dbconnect->query($sql) == TRUE)) 
+        {
+            echo "Error: " . $sql . "<br>" . $dbconnect->error;
+        }*/
+
+        
+    
+    ?>
+
     <head>
         <script>
             var newData = Array(12).fill("").map(() =>  Array(999).fill("").map(() => Array(2).fill("")));
-            var newDataSimple = [];
+            var newDataSimple = new Array();
             var lengths = new Array(12);
 
             function CompileInputs()
@@ -74,7 +99,7 @@
 
                     echo '<h1 id="rowNum">Editing Class Order #'.$_POST["rowSelected"].'</h1>';
                     echo '<div><form><button type="button" onclick="CompileInputs()">Save and Update Database</button></form></div>';
-                    DataToInputField($result, $internalNames, $dispNames);
+                    DataToInputField($result, $internalNames, $dispNames, "class");
                 ?>
             </div>
         </div>

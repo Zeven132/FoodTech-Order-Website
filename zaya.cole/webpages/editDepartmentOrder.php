@@ -1,11 +1,75 @@
 <html>
-    <?php include("../PHP_Components/headNav.php"); ?>
+    <?php include("../PHP_Components/headNav.php");?>
+    <head>
+        <script>
+            var newData = Array(12).fill("").map(() =>  Array(999).fill("").map(() => Array(2).fill("")));
+            var newDataSimple = new Array();
+            var lengths = new Array(12);
+
+            function CompileInputs()
+            {
+                for(let i = 0; i < 12; i++)
+                {
+                    let k = 0;
+                    while(document.getElementById("k"+i+"n"+k) != null)
+                    {
+                        newData[i][k][1] = CleanInput(document.getElementById("k"+i+"q"+k).value); // [][][1] is quantity, [][][0] is name
+                        newData[i][k][0] = CleanInput(document.getElementById("k"+i+"n"+k).value);
+                        k++;
+                    }
+                    lengths[i] = k;
+                }
+
+                newDataSimple[0] = document.getElementById("classIDs").value;
+                newDataSimple[1] = document.getElementById("recipes").value;
+                newDataSimple[2] = document.getElementById("techReq").value;
+                newDataSimple[3] = document.getElementById("dateCreated").value;
+                
+
+                let rowNum = document.getElementById("rowNum").innerHTML;
+
+                $.post("updateDepartmentDataUpload.php", { 
+                    row: rowNum.replace("Editing Department Order #", ""), 
+                    classIDs: newDataSimple[0], 
+                    recipes: newDataSimple[1], 
+                    techReq: newDataSimple[2], 
+                    dateCreated: newDataSimple[3],
+                    baking: JSEncodeJSON(newData[0], lengths[0]),
+                    bread: JSEncodeJSON(newData[1], lengths[1]), 
+                    chilled: JSEncodeJSON(newData[2], lengths[2]), 
+                    dairy: JSEncodeJSON(newData[3], lengths[3]), 
+                    dried: JSEncodeJSON(newData[4], lengths[4]), 
+                    fresh: JSEncodeJSON(newData[5], lengths[5]), 
+                    frozen: JSEncodeJSON(newData[6], lengths[6]), 
+                    other: JSEncodeJSON(newData[7], lengths[7]), 
+                    raw: JSEncodeJSON(newData[8], lengths[8]), 
+                    sauces: JSEncodeJSON(newData[9], lengths[9]), 
+                    tinned: JSEncodeJSON(newData[10], lengths[10]), 
+                    vegetables: JSEncodeJSON(newData[11], lengths[11])});
+            }
+
+            $(document).ajaxComplete(function()
+            {
+                Redirect();
+            });
+        </script>
+    </head>
+
     <body>
         <div class="wrapper">
-                <div>
-                    <h1>Edit Existing Department Order</h1>
-                    <form action="">
-                        <label for="rowSelect">Input RowID of Existing Order:</label>
-                        <input type="text" id="rowSelect">
-                    </form>
-                </div>
+            <div>
+                <?php
+                    $dispNames = array("Baking Ingredients", "Bread, Pasta, Rice", "Chilled Food (Bacon, Salami, etc)", "Dairy & Eggs", "Dried Herbs & Spices", "Fresh Fruit & Herbs", "Frozen Food", "Other", "Raw Meat, Chicken, Fish", "Sauces, Condiments", "Tinned Food", "Vegetables");
+                    $internalNames = array("Baking", "Bread", "Chilled", "Dairy", "Dried", "Fresh", "Frozen", "Other", "Raw", "Sauces", "Tinned", "Vegetables");
+
+                    $sql = "SELECT * FROM zayacole_department_order WHERE RowID = ".$_POST["rowSelected"];
+                    $result = $dbconnect->query($sql);
+
+                    echo '<h1 id="rowNum">Editing Department Order #'.$_POST["rowSelected"].'</h1>';
+                    echo '<div><form><button type="button" onclick="CompileInputs()">Save and Update Database</button></form></div>';
+                    DataToInputField($result, $internalNames, $dispNames, "department");
+                ?>
+            </div>
+        </div>
+    </body>
+</html>

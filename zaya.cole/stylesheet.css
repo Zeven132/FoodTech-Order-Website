@@ -99,17 +99,16 @@ p, li, label{
     width: 100%;
     background-color: var(--black);
     border-collapse: collapse;
+
 }
 
-tr:hover {
-    background-color: var(--blue0);
-    color: var(--black);
+.databaseDispTable tr > th {
+    background-color: var(--black);
+    padding-top: 20px;
 }
 
 th {
     color: var(--blue0);
-
-
     font-size: small;
 }
 
@@ -119,6 +118,13 @@ td {
     border-right: 1px solid #ddd;
     font-size: smaller;
 }
+
+tr:hover {
+    background-color: var(--blue0);
+    color: var(--black);
+}
+
+
 
 tr {
     border-bottom: 1px solid #ddd;

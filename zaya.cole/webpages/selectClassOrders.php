@@ -8,7 +8,10 @@
                     
                     <label for="rowSelect">Rows to combine into department order:</label>
                     <input type="text" id="rowSelect" name="rowSelect">
-                    <p>Type the RowID of each class order, seperating each by a comma and a space.<br>Example: this input would choose RowID 5, 6, 7, and 8 to be combined into a department order.<br>5, 6, 7, 8</p>
+                    <p>Type the RowID of each class order, seperating each by a comma and a space.<br>
+                    Example: this input would choose RowID 5, 6, 7, and 8 to be combined into a department order.<br>
+                    5, 6, 7, 8<br>
+                    Remember to only input Class Orders which already exist.</p>
                 </form>
             </div>
             <?php
